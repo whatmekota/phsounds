@@ -2,10 +2,10 @@
 
 ## 0.2.0
 
-For playhound 2.2.8 and newer (plugin API 7). Not published.
+For playhound 2.2.8 and newer (plugin API 7). The first release, in the plugin store under For fun.
 
 - **The stroke as it's sent** comes in by itself, every position, with when the device should be there, instead of being looked at every 15 ms. A turn is played the moment it's seen, or when the device is meant to turn if that's later: a quick, sharp stroke's slap lands on time, and none comes early. An inverted device no longer puts the slaps at the top: the positions are the stroke as meant.
-- **Knows when there's sound already**: playhound now says whether sound comes out of the player (muted, the volume, a video with no sound track), in place of its own guess from the video. Until it can tell, a video counts as sound: a moment for most, a few seconds for a small, low-bitrate one. A video in a headset (HereSphere, DeoVR) is told apart now: it counts as sound, as it plays there, and the status says "Quiet: the headset has the sound". For one with no sound, switch **Only when nothing else makes sound** off.
+- **Knows when there's sound already**: playhound now says whether sound comes out of the player (muted, the volume, a video with no sound track), in place of its own guess from the video. Until it can tell, a video counts as sound: a moment, a second at most (on playhound 2.2.8, a few seconds for a small, low-bitrate video). A video in a headset (HereSphere, DeoVR) is told apart now: it counts as sound, as it plays there, and the status says "Quiet: the headset has the sound". For one with no sound, switch **Only when nothing else makes sound** off.
 - **The generator's shape**: a saw's quick drop slaps harder than a pulse's slow fall.
 - **When the stroke runs ahead of the picture** (an axis linked to a script), a slap read off it waits for the picture, by your device latency.
 - **Add slaps…**, **Add wet loops…** and **Add moans…** are playhound's own file buttons now.
@@ -13,7 +13,7 @@ For playhound 2.2.8 and newer (plugin API 7). Not published.
 
 ## 0.1.0
 
-First version, for playhound 2.2.6 and newer (plugin API 6). Not published.
+First version, for playhound 2.2.6 and newer (plugin API 6). Never published: 0.2.0 is the first release.
 
 - **Sounds in time with the stroke**: a wet slap at the bottom of each stroke; a wet loop while it moves and a pop at the top now and then, where there are some. Louder and brighter the faster and deeper; silent when it's still. They follow the intensity knob, and back off during an edge.
 - **Follows whatever moves the stroke**: a script with the video (set up ahead, to land with the picture rather than early with the device's latency), the stroke generator (from its phase, a moment ahead), or the stroke as it's sent.

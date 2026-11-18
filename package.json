@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
+    "build:public": "node build.mjs --public --minify",
     "test": "node --import tsx --test test/turns.test.ts test/timing.test.ts test/settings.test.ts test/achievements.test.ts",
     "typecheck": "tsc -p tsconfig.json"
   },

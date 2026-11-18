@@ -1,7 +1,9 @@
 // Builds dist/index.js (one self-contained ES module) and phsounds.zip
 // (manifest.json, index.js and the icon at the root, the sound sets under
 // sounds/, deflated).
-//   node build.mjs [--minify]
+//   node build.mjs [--minify] [--public]
+// --public writes release/phsounds-<version>.zip, release/manifest.json and
+// release/icon.svg instead: the files a GitHub release needs.
 // Each folder in sounds/ is a set (see src/sets.ts): files right in it are
 // slaps; its wet/, pop/ and moan/ folders hold the other kinds. They're
 // listed in src/shipped.ts, written here, and packed as
@@ -132,7 +134,14 @@ const out = zip([
   // The sets' sounds, reached with ctx.asset.
   ...packed.map(([path, file]) => [path, readFileSync(file)]),
 ])
-const file = 'phsounds.zip'
+let file = 'phsounds.zip'
+if (process.argv.includes('--public')) {
+  mkdirSync(join(here, 'release'), { recursive: true })
+  file = join('release', `phsounds-${manifest.version}.zip`)
+  // The store in playhound reads these to show the plugin before downloading it.
+  writeFileSync(join(here, 'release', 'manifest.json'), zipped)
+  writeFileSync(join(here, 'release', 'icon.svg'), readFileSync(join(here, 'icon.svg')))
+}
 writeFileSync(join(here, file), out)
 const what = s => ROLES.filter(r => s.files[r].length).map(r => `${s.files[r].length} ${r}`).join(', ')
 console.log(`${file}: ${out.length} bytes (v${manifest.version}); sets: ${sets.map(s => `${s.name} (${what(s)})`).join('; ') || 'none'}`)

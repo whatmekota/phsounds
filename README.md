@@ -6,7 +6,9 @@ Needs playhound **2.2.8** or newer (plugin API 7), in the desktop app or a brows
 
 ## Install
 
-Not in the store. Build it (below), then in playhound: **Settings → Plugins**, and drop `phsounds.zip` on that page. Or, while working on it, **Load from folder…** this folder: `manifest.json` points at `dist/index.js`, and a rebuild reloads it.
+It's in playhound's plugin store, under **For fun**: **Settings → Plugins → Discover**, find Stroke sounds and install it. On playhound 2.2.8 it isn't listed yet: there, **Add a plugin from GitHub** and give it `whatmekota/phsounds`.
+
+Or drop the zip from the [latest release](https://github.com/whatmekota/phsounds/releases/latest) on that page. While working on it, **Load from folder…** this folder (after `npm run build`): `manifest.json` points at `dist/index.js`, and a rebuild reloads it.
 
 It asks for two permissions:
 
