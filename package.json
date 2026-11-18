@@ -1,0 +1,18 @@
+{
+  "name": "phsounds",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --import tsx --test test/turns.test.ts test/timing.test.ts test/settings.test.ts test/achievements.test.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "description": "phsounds: sex sounds in time with the stroke, for playhound. Recorded slaps, or your own.",
+  "license": "MIT"
+}
