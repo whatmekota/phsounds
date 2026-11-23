@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import { balanceGains, planHit, strokeStrength } from '../src/levels.ts'
 import { cleanIndex, trim } from '../src/own.ts'
 import { MIX } from '../src/sets.ts'
-import { fields, heldBy, listHint, readConfig } from '../src/settings.ts'
+import { fields, heldBy, listHint, MIN_GAP_DEFAULT, readConfig, tooSoon } from '../src/settings.ts'
 
 const SETS = ['wet-plaps', 'other']
 const state = { key: 'Shift+U', own: { slap: ['a.wav', 'b.wav'], wet: [], moan: [] }, sets: [{ id: 'wet-plaps', name: 'Wet plaps' }], wet: false, pops: false }
@@ -85,5 +85,17 @@ describe('your sounds', () => {
     const { offset, duration } = trim(x, SR)
     assert.ok(Math.abs(offset - 12_000 / SR) < 0.003, `offset ${offset}`)
     assert.ok(duration < 0.1, `duration ${duration}`)
+  })
+})
+
+describe('least time between slaps', () => {
+  it('keeps slaps apart by the setting, and starts afresh after a seek', () => {
+    assert.equal(readConfig({}, SETS).minGapMs, MIN_GAP_DEFAULT)
+    assert.equal(readConfig({ minGap: 99999 }, SETS).minGapMs, 1000)
+    assert.equal(tooSoon(1050, 1000, 100), true)
+    assert.equal(tooSoon(1100, 1000, 100), false)
+    assert.equal(tooSoon(1050, 1000, 0), false)
+    // Lined up again after a seek, earlier than the last slap was due.
+    assert.equal(tooSoon(900, 1000, 100), false)
   })
 })

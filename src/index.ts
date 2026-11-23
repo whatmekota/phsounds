@@ -12,7 +12,7 @@ import { Heat } from './heat'
 import { balanceGains, knobWeight, loopGain, planHit, planPop, strokeStrength, wetLevel } from './levels'
 import { OwnSounds, prepare, prepareGroup, TARGET } from './own'
 import { MIX, ROLES } from './sets'
-import { fields, heldBy, MOAN_GAP, readConfig } from './settings'
+import { fields, heldBy, MOAN_GAP, readConfig, tooSoon } from './settings'
 import { SHIPPED } from './shipped'
 import { cleanActions, speedAt, turningPoints } from './turns'
 
@@ -156,6 +156,8 @@ export default function activate(ctx: PluginContext) {
 
   // ─── Playing one turn ────────────────────────────────────────────────────
   let lastBottomWall = Number.NEGATIVE_INFINITY
+  /** When the last slap was heard (wall ms), for Least time between slaps. */
+  let lastSlapWall = Number.NEGATIVE_INFINITY
 
   /**
    * A turn at context time `at` (heard at wall ms `wall`), of strength k
@@ -165,9 +167,13 @@ export default function activate(ctx: PluginContext) {
   function play(kind: Turn['kind'], k: number, amp: number, at: number, wall: number, real = true) {
     const bal = balance()
     if (kind === 'bottom') {
+      // A bounce or a vibration's little turns: not a stroke of its own.
+      if (tooSoon(wall, lastSlapWall, cfg.minGapMs))
+        return
       const plan = planHit(MIX, k, amp, bal)
       if (!plan)
         return
+      lastSlapWall = wall
       const slaps = takes('slap')
       if (slaps.length && engine.hit(at, plan, engine.pick(slaps, k, 'slap')) && real)
         tally.slap()

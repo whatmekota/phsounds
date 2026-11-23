@@ -17,6 +17,8 @@ export interface Config {
   onlySilent: boolean
   /** Ms later (or earlier, below 0) than the picture. */
   nudgeMs: number
+  /** Least ms between two slaps: a stroke that ends sooner makes none. 0: every stroke. */
+  minGapMs: number
   /** Play your own sounds where you've added some. */
   own: boolean
   moanEvery: MoanEvery
@@ -27,6 +29,24 @@ export const MOAN_GAP: Record<MoanEvery, { gapMs: number, chance: number }> = {
   rare: { gapMs: 25_000, chance: 0.25 },
   some: { gapMs: 12_000, chance: 0.35 },
   often: { gapMs: 6_000, chance: 0.5 },
+}
+
+/**
+ * Least time between slaps, by default: below the quickest real strokes
+ * (four a second is 250 ms bottom to bottom), above the turns of a script
+ * that vibrates or bounces, where every little turn slapped and it rattled
+ * like a machine gun.
+ */
+export const MIN_GAP_DEFAULT = 100
+
+/**
+ * Whether a slap at `wall` comes too soon after the last one, at `last`
+ * (both wall ms). One earlier than the last (sounds lined up again after a
+ * seek) is a fresh start, never too soon.
+ */
+export function tooSoon(wall: number, last: number, minGapMs: number): boolean {
+  const since = wall - last
+  return minGapMs > 0 && since >= 0 && since < minGapMs
 }
 
 const num = (v: unknown, fallback: number, lo: number, hi: number) =>
@@ -45,6 +65,7 @@ export function readConfig(v: Record<string, unknown>, sets: readonly string[]):
     tops: v.tops !== false,
     onlySilent: v.onlySilent !== false,
     nudgeMs: Math.round(num(v.nudge, 0, -300, 300)),
+    minGapMs: Math.round(num(v.minGap, MIN_GAP_DEFAULT, 0, 1000)),
     own: v.own !== false,
     moanEvery: oneOf(v.moanEvery, ['rare', 'some', 'often'] as const, 'some'),
   }
@@ -144,6 +165,17 @@ export function fields(state: FormState, run: Partial<Runs>): SettingField[] {
       step: 10,
       unit: ' ms',
       default: 0,
+    },
+    {
+      key: 'minGap',
+      type: 'slider',
+      label: 'Least time between slaps',
+      hint: 'A stroke that ends sooner than this after the last slap makes none: for scripts that vibrate or bounce, where every little turn would slap. 0: every stroke slaps.',
+      min: 0,
+      max: 500,
+      step: 10,
+      unit: ' ms',
+      default: MIN_GAP_DEFAULT,
     },
 
     { type: 'heading', label: 'Your own sounds', hint: 'Audio files of your own: WAV, MP3, OGG, FLAC, M4A. Kept in playhound, levelled like the built-in ones.' },
